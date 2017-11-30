@@ -40,6 +40,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-cache:${springBootVersion}"
     compile "org.springframework:spring-jms:4.2.7.RELEASE"
     compile "com.amazonaws:amazon-sqs-java-messaging-lib:1.0.4"
+    compile "com.amazonaws:aws-java-sdk-s3:1.11.106"
     compile "com.github.ben-manes.caffeine:caffeine:2.3.3"
 
     testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"

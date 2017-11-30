@@ -3,6 +3,7 @@ package com.shaffer.dao;
 import com.shaffer.model.Object;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -12,6 +13,12 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames={"object"})
 public class ObjectDao {
     private static final Logger logger = LoggerFactory.getLogger(ObjectDao.class);
+
+    @Value("${aws.bucket.name}")
+    private String bucketName;
+
+    @Value("${aws.bucket.object.key}")
+    private String keyName;
 
     @Cacheable
     public Object get(String id) {
