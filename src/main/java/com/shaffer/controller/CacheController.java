@@ -27,4 +27,10 @@ public class CacheController {
         service.refresh(id);
         return "success";
     }
+
+    @RequestMapping(value = "refresh", method= RequestMethod.PUT)
+    public String refresh() {
+        service.refreshAll();
+        return "success";
+    }
 }

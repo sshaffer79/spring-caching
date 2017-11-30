@@ -7,7 +7,10 @@ import java.util.Calendar;
 public class Object implements Serializable{
     public String id;
     public String name;
-    public LocalDateTime timestamp;
+    public LocalDateTime timestamp = LocalDateTime.now();
+
+    public Object() {
+    }
 
     public Object(String id, String name) {
         this.id = id;
