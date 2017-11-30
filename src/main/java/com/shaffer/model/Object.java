@@ -1,14 +1,18 @@
 package com.shaffer.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 
 public class Object implements Serializable{
     public String id;
     public String name;
+    public LocalDateTime timestamp;
 
     public Object(String id, String name) {
         this.id = id;
         this.name = name;
+        this.timestamp = LocalDateTime.now();
     }
 
     public String getId() {
@@ -27,11 +31,20 @@ public class Object implements Serializable{
         this.name = name;
     }
 
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
     @Override
     public String toString() {
         return "Object{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", timestamp='" + timestamp + '\'' +
                 '}';
     }
 }
