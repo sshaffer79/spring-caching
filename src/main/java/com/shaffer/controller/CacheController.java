@@ -24,6 +24,7 @@ public class CacheController {
     @RequestMapping(value = "refresh/{id}", method= RequestMethod.PUT)
     public String refresh(@PathVariable("id") String id) {
         logger.info(id);
-        return id;
+        service.refresh(id);
+        return "success";
     }
 }
