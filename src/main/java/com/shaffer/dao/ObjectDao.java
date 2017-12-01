@@ -21,18 +21,8 @@ public class ObjectDao {
     @Autowired
     private S3Dao s3Dao;
 
-    @Cacheable
+    @Cacheable(unless = "#result==null")
     public Optional<Object> get(String id) {
-//        List<Object> list = s3Dao.getAllObjects();
-//
-//        if (list.isEmpty()) {
-//            return null;
-//        }
-//
-//        Optional<Object> object = list.stream()
-//                .peek(x -> logger.info("will filter " + x))
-//                .filter(x -> x.getId().equals(id))
-//                .findFirst();
         Optional<Object> object = Optional.ofNullable(s3Dao.getBy(id));
 
         logger.info(object.toString());
@@ -40,7 +30,7 @@ public class ObjectDao {
         return object;
     }
 
-    @Cacheable
+    @Cacheable(unless = "#result==null")
     public Optional<Object> getFromAll(String id) {
         List<Object> list = s3Dao.getAllObjects();
 
