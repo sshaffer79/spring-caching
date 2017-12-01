@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -39,8 +40,11 @@ public class S3Dao {
     @Autowired
     private AmazonS3 s3Client;
 
+    @Autowired
+    private CacheManager cacheManager;
+
     @PostConstruct
-    public void init() {
+    public void initialize() {
         ObjectListing ol = s3Client.listObjects(bucketName, prefix);
         Pattern pattern = Pattern.compile(prefix + "/(.*?).json");
         for (S3ObjectSummary summary : ol.getObjectSummaries()) {
@@ -50,7 +54,8 @@ public class S3Dao {
                 if (matcher.find()) {
                     String id = matcher.group(1);
                     System.out.println(id);
-                    refresh(id);
+                    Object object = refresh(id);
+                    cacheManager.getCache("objects").put(id, object);
                 }
             }
         }
