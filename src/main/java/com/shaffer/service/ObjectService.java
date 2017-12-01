@@ -32,10 +32,6 @@ public class ObjectService {
 
     public void refresh(String id) {
         logger.info(id);
-        dao.refresh(id);
-    }
-
-    public void refreshAll() {
-        s3Dao.refresh();
+        s3Dao.refresh(id);
     }
 }

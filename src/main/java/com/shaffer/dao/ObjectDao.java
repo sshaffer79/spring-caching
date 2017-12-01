@@ -23,6 +23,25 @@ public class ObjectDao {
 
     @Cacheable
     public Optional<Object> get(String id) {
+//        List<Object> list = s3Dao.getAllObjects();
+//
+//        if (list.isEmpty()) {
+//            return null;
+//        }
+//
+//        Optional<Object> object = list.stream()
+//                .peek(x -> logger.info("will filter " + x))
+//                .filter(x -> x.getId().equals(id))
+//                .findFirst();
+        Optional<Object> object = Optional.ofNullable(s3Dao.getBy(id));
+
+        logger.info(object.toString());
+
+        return object;
+    }
+
+    @Cacheable
+    public Optional<Object> getFromAll(String id) {
         List<Object> list = s3Dao.getAllObjects();
 
         if (list.isEmpty()) {
@@ -37,10 +56,5 @@ public class ObjectDao {
         logger.info(object.toString());
 
         return object;
-    }
-
-    @CacheEvict(key = "#id")
-    public void refresh(String id) {
-
     }
 }
