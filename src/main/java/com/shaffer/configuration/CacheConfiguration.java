@@ -30,4 +30,35 @@ public class CacheConfiguration {
 
         return cacheManager;
     }
+
+    //    @Bean
+//    public CacheFactory cacheFactory() {
+//
+//        CacheFactory cacheFactory = new CacheFactory();
+//        cacheFactory.setCacheName("defaultCache");
+//        cacheFactory.setCacheClientFactory(new MemcacheClientFactoryImpl());
+//        cacheFactory.setAddressProvider(new DefaultAddressProvider("localhost:11211"));
+//        cacheFactory.setConfiguration(cacheConfiguration());
+//
+//        return cacheFactory;
+//    }
+//
+//    @Bean
+//    public CacheManager cacheManager() {
+//
+//        SSMCache ssmCache = new SSMCache(cache, 300, false);
+//        SSMCacheManager ssmCacheManager = new SSMCacheManager();
+//        ssmCacheManager.setCaches(Collections.singleton());
+//
+//        return ssmCacheManager;
+//    }
+//
+//    private CacheConfiguration cacheConfiguration() {
+//
+//        ElastiCacheConfiguration elastiCacheConfiguration = new ElastiCacheConfiguration();
+//        elastiCacheConfiguration.setConsistentHashing(true);
+//        elastiCacheConfiguration.setClientMode(ClientMode.Static); // change this to ClientMode.Dynamic if you are using ElastiCache cluster
+//
+//        return elastiCacheConfiguration;
+//    }
 }
