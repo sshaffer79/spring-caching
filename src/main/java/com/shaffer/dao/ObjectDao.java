@@ -9,7 +9,6 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -20,8 +19,9 @@ public class ObjectDao {
     @Autowired
     private S3Dao s3Dao;
 
-    @Cacheable(unless = "#result==null")
+    @Cacheable(key = "#id", unless = "#result==null")
     public Optional<Object> get(String id) {
+        logger.info("Get by {}", id);
         Optional<Object> object = Optional.ofNullable(s3Dao.getBy(id));
 
         logger.info(object.toString());

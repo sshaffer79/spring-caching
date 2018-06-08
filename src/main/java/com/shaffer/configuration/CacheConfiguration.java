@@ -58,6 +58,9 @@ public class CacheConfiguration {
 
     @Bean
     CacheManager cacheManager() {
-        return new RedisCacheManager(redisTemplate(), Arrays.asList("object", "objects"), false);
+        RedisCacheManager cacheManager =  new RedisCacheManager(redisTemplate(), Arrays.asList("object", "objects"), false);
+        cacheManager.setUsePrefix(true);
+
+        return cacheManager;
     }
 }
