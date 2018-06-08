@@ -29,22 +29,4 @@ public class ObjectDao {
 
         return object;
     }
-
-    @Cacheable(unless = "#result==null")
-    public Optional<Object> getFromAll(String id) {
-        List<Object> list = s3Dao.getAllObjects();
-
-        if (list.isEmpty()) {
-            return null;
-        }
-
-        Optional<Object> object = list.stream()
-                .peek(x -> logger.info("will filter " + x))
-                .filter(x -> x.getId().equals(id))
-                .findFirst();
-
-        logger.info(object.toString());
-
-        return object;
-    }
 }

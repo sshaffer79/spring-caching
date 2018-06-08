@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
@@ -49,34 +48,15 @@ public class S3Dao {
         Pattern pattern = Pattern.compile(prefix + "/(.*?).json");
         for (S3ObjectSummary summary : ol.getObjectSummaries()) {
             if (!summary.getKey().equals(prefix + "/") && !summary.getKey().equals(prefix + "/temp.json")) {
-                System.out.println(summary.getBucketName() + "::::" + summary.getKey());
+                logger.info(summary.getBucketName() + "::::" + summary.getKey());
                 Matcher matcher = pattern.matcher(summary.getKey());
                 if (matcher.find()) {
                     String id = matcher.group(1);
-                    System.out.println(id);
                     Object object = refresh(id);
                     cacheManager.getCache("objects").put(id, object);
                 }
             }
         }
-    }
-
-    @Cacheable
-    public List<Object> getAllObjects() {
-        S3Object s3object = s3Client.getObject(bucketName, keyName);
-        S3ObjectInputStream inputStream = s3object.getObjectContent();
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        List<Object> list = new ArrayList<>();
-        try {
-            list = mapper.readValue(inputStream, mapper.getTypeFactory().constructCollectionType(List.class, Object.class));
-            logger.info(list.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return list;
     }
 
     @CachePut(key = "#id" , unless="#result==null")

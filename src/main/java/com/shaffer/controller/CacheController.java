@@ -1,10 +1,13 @@
 package com.shaffer.controller;
 
+import com.shaffer.model.Object;
 import com.shaffer.service.ObjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/cache")
@@ -16,7 +19,7 @@ public class CacheController {
 
     @RequestMapping(value ="/{id}", method= RequestMethod.GET)
     @ResponseBody
-    public Object get(@PathVariable("id") String id) {
+    public Object getById(@PathVariable("id") String id) {
         logger.info(id);
         return service.get(id);
     }
