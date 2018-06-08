@@ -1,6 +1,8 @@
 package com.shaffer.configuration;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCache;
@@ -14,6 +16,8 @@ import java.util.concurrent.TimeUnit;
 @EnableCaching
 @Configuration
 public class CacheConfiguration {
+    private static final Logger logger = LoggerFactory.getLogger(CacheConfiguration.class);
+
     @Bean
     public CacheManager cacheManager() {
         SimpleCacheManager cacheManager = new SimpleCacheManager();
@@ -21,10 +25,12 @@ public class CacheConfiguration {
                 new CaffeineCache("object", Caffeine.newBuilder()
                         .expireAfterAccess(10, TimeUnit.SECONDS)
                         .maximumSize(1000)
+                        .removalListener((o, o2, removalCause) -> logger.info("Key {} was removed due ({})", o, removalCause))
                         .build()),
                 new CaffeineCache("objects", Caffeine.newBuilder()
                         .expireAfterAccess(60, TimeUnit.MINUTES)
                         .maximumSize(100)
+                        .removalListener((o, o2, removalCause) -> logger.info("Key {} was removed due ({})", o, removalCause))
                         .build())
         ));
 
