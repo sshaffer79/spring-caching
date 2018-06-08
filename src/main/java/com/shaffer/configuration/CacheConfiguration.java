@@ -1,70 +1,64 @@
 package com.shaffer.configuration;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shaffer.model.Object;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.caffeine.CaffeineCache;
-import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 
 @EnableCaching
 @Configuration
 public class CacheConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(CacheConfiguration.class);
 
-    @Bean
-    public CacheManager cacheManager() {
-        SimpleCacheManager cacheManager = new SimpleCacheManager();
-        cacheManager.setCaches(Arrays.asList(
-                new CaffeineCache("object", Caffeine.newBuilder()
-                        .expireAfterAccess(10, TimeUnit.SECONDS)
-                        .maximumSize(1000)
-                        .removalListener((o, o2, removalCause) -> logger.info("Key {} was removed due ({})", o, removalCause))
-                        .build()),
-                new CaffeineCache("objects", Caffeine.newBuilder()
-                        .expireAfterAccess(60, TimeUnit.MINUTES)
-                        .maximumSize(100)
-                        .removalListener((o, o2, removalCause) -> logger.info("Key {} was removed due ({})", o, removalCause))
-                        .build())
-        ));
+    @Value("${cache.host:127.0.0.1}")
+    private String host;
 
-        return cacheManager;
+    @Value("${cache.port:6379}")
+    private int port;
+
+    @Autowired
+    ObjectMapper objectMapper;
+
+    @Bean
+    JedisConnectionFactory jedisConnectionFactory() {
+        JedisConnectionFactory factory = new JedisConnectionFactory();
+        factory.setHostName(host);
+        factory.setPort(port);
+        factory.setUsePool(true);
+        return factory;
     }
 
-    //    @Bean
-//    public CacheFactory cacheFactory() {
-//
-//        CacheFactory cacheFactory = new CacheFactory();
-//        cacheFactory.setCacheName("defaultCache");
-//        cacheFactory.setCacheClientFactory(new MemcacheClientFactoryImpl());
-//        cacheFactory.setAddressProvider(new DefaultAddressProvider("localhost:11211"));
-//        cacheFactory.setConfiguration(cacheConfiguration());
-//
-//        return cacheFactory;
-//    }
-//
-//    @Bean
-//    public CacheManager cacheManager() {
-//
-//        SSMCache ssmCache = new SSMCache(cache, 300, false);
-//        SSMCacheManager ssmCacheManager = new SSMCacheManager();
-//        ssmCacheManager.setCaches(Collections.singleton());
-//
-//        return ssmCacheManager;
-//    }
-//
-//    private CacheConfiguration cacheConfiguration() {
-//
-//        ElastiCacheConfiguration elastiCacheConfiguration = new ElastiCacheConfiguration();
-//        elastiCacheConfiguration.setConsistentHashing(true);
-//        elastiCacheConfiguration.setClientMode(ClientMode.Static); // change this to ClientMode.Dynamic if you are using ElastiCache cluster
-//
-//        return elastiCacheConfiguration;
-//    }
+    @Bean
+    RedisTemplate<Object, Object> redisTemplate() {
+        RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(jedisConnectionFactory());
+
+        Jackson2JsonRedisSerializer serializer = new Jackson2JsonRedisSerializer(Object.class);
+        serializer.setObjectMapper(objectMapper);
+
+        redisTemplate.setDefaultSerializer(serializer);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashKeySerializer(serializer);
+        redisTemplate.setValueSerializer(serializer);
+        return redisTemplate;
+    }
+
+    @Bean
+    CacheManager cacheManager() {
+        return new RedisCacheManager(redisTemplate(), Arrays.asList("object", "objects"), false);
+    }
 }

@@ -2,9 +2,10 @@ package com.shaffer.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Calendar;
 
 public class Object implements Serializable{
+    private static final long serialVersionUID = 7087737069505105221L;
+
     public String id;
     public String name;
     public LocalDateTime timestamp = LocalDateTime.now();

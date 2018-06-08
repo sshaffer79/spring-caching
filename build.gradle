@@ -41,9 +41,11 @@ dependencies {
     compile "org.springframework:spring-jms:4.2.7.RELEASE"
     compile "com.amazonaws:amazon-sqs-java-messaging-lib:1.0.4"
     compile "com.amazonaws:aws-java-sdk-s3:1.11.106"
-    compile "com.github.ben-manes.caffeine:caffeine:2.3.3"
-    compile "com.google.code.simple-spring-memcached:spring-cache:4.0.0"
-    compile "com.google.code.simple-spring-memcached:aws-elasticache-provider:4.0.0"
+    compile "org.springframework.data:spring-data-redis:1.8.10.RELEASE"
+    compile "redis.clients:jedis:2.9.0"
+    compile "com.fasterxml.jackson.module:jackson-module-parameter-names"
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
 
     testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
 }
