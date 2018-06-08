@@ -81,11 +81,13 @@ public class S3Dao {
 
     @CachePut(key = "#id" , unless="#result==null")
     public Object refresh(String id){
+        logger.info("Refreshing for id {}", id);
         return getObject(id);
     }
 
     @Cacheable(key="#id", unless = "#result==null")
     public Object getBy(String id) {
+        logger.info("Get for id {}", id);
         return getObject(id);
     }
 
